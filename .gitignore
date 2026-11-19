@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.DS_Store
+results4/ts/
+results4/lat/

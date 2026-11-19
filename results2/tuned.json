@@ -1,0 +1,43 @@
+{
+ "tinybev_route": {
+  "gamma": 0.005,
+  "gamma_L": 0.1
+ },
+ "tinybev": {
+  "gamma": 0.005,
+  "gamma_L": 0.1
+ },
+ "noncoop": {
+  "gamma": 0.005,
+  "gamma_L": 0.1
+ },
+ "static": {
+  "gamma": 0.005,
+  "gamma_L": 0.1
+ },
+ "coop_lfu": {
+  "gamma": 0.02
+ },
+ "agnostic": {
+  "gamma": 0.005
+ },
+ "cmarl": {
+  "alpha_mu": 0.2,
+  "eps0": 0.5,
+  "eta_scale": 20.0,
+  "lr_q": 1.0
+ },
+ "tinybev_h": {
+  "gamma": 0.005,
+  "gamma_L": 0.1
+ },
+ "energy_agnostic": {
+  "gamma": 0.005,
+  "gamma_L": 0.1
+ },
+ "oracle": {
+  "gamma": 0.005,
+  "gamma_L": 0.1
+ },
+ "lru_ft": {}
+}
