@@ -52,7 +52,7 @@ def cfg(meth, **extra):
 
 
 def go(jobs, name):
-    with Pool(2) as p:
+    with Pool(int(os.environ.get('WORKERS', os.cpu_count()))) as p:
         out = p.map(job, jobs, chunksize=1)
     json.dump(out, open(os.path.join(OUT, name + '.json'), 'w'))
     print(name, len(out), 'runs')
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     if stage == 'traces':
         need = [(s, 200, 400, 6000) for s in list(TUNE_SEEDS) + EVAL]
         need += [(s, n, 400, 6000) for s in SWEEP for n in (100, 400)]
-        with Pool(2) as p:
+        with Pool(int(os.environ.get('WORKERS', os.cpu_count()))) as p:
             p.map(tr, need, chunksize=1)
         print('traces done')
     elif stage == 'tune':

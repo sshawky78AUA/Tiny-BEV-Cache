@@ -127,7 +127,7 @@ if __name__ == '__main__':
         J = [j for j in SWEEPS[name]() if key(*j[:4]) not in done]
         fn = run_one
     print(name, len(J), 'to do,', len(done), 'done', flush=True)
-    with Pool(2) as p, open(path, 'a') as f:
+    with Pool(int(os.environ.get('WORKERS', os.cpu_count()))) as p, open(path, 'a') as f:
         for rows in p.imap_unordered(fn, J, chunksize=1):
             for row in rows:
                 f.write(json.dumps(row) + '\n')

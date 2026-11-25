@@ -91,7 +91,7 @@ def run_one(a):
 def traces():
     from mobility import simulate
     need = [(s, n, 400, 6000) for s in SEEDS for n in NS]
-    with Pool(2) as p:
+    with Pool(int(os.environ.get('WORKERS', os.cpu_count()))) as p:
         p.starmap(simulate, need, chunksize=1)
     print('traces done', flush=True)
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
             done.add(key(e, m, x, s))
     J = [j for j in SWEEPS[name]() if key(*j[:4]) not in done]
     print(name, len(J), 'runs to do,', len(done), 'done', flush=True)
-    with Pool(2) as p, open(path, 'a') as f:
+    with Pool(int(os.environ.get('WORKERS', os.cpu_count()))) as p, open(path, 'a') as f:
         for k, row in p.imap_unordered(run_one, J, chunksize=1):
             f.write(json.dumps(row) + '\n'); f.flush()
     print(name, 'finished', flush=True)

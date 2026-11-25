@@ -57,7 +57,7 @@ if __name__ == '__main__':
         J = [j for j in J if j not in done]
         print('tref', len(J), 'to do', flush=True)
         import json
-        with Pool(2) as p, open(fn, 'a') as fo:
+        with Pool(int(os.environ.get('WORKERS', os.cpu_count()))) as p, open(fn, 'a') as fo:
             for r in p.imap_unordered(tref_job, J):
                 fo.write(json.dumps(r) + '\n'); fo.flush()
         print('DONE tref'); sys.exit()
@@ -69,7 +69,7 @@ if __name__ == '__main__':
              if not os.path.exists(os.path.join(OUT, 'latc', f'{m}_{N}_{R}_{s}.npy'))]
         f = lat_job
     print(st, len(J), 'to do', flush=True)
-    with Pool(2) as p:
+    with Pool(int(os.environ.get('WORKERS', os.cpu_count()))) as p:
         for r in p.imap_unordered(f, J):
             print(*r, flush=True)
     print('DONE', st)

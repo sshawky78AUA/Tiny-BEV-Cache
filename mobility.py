@@ -94,8 +94,10 @@ def simulate(seed, n_eq=200, n_bg=600, T=6000, out_dir=os.path.join(HERE, 'trace
         return npz
     netp = build_net()
     net = sumolib.net.readNet(netp)
-    rou = os.path.join(out_dir, tag + '.rou.xml')
-    fcd = os.path.join(out_dir, tag + '.fcd.xml')
+    # per-process temporary names, so parallel runs that need the same trace do not collide
+    tmp = f'{tag}.{os.getpid()}'
+    rou = os.path.join(out_dir, tmp + '.rou.xml')
+    fcd = os.path.join(out_dir, tmp + '.fcd.xml')
     routes = make_routes(net, seed, n_eq, n_bg, T, rou)
     subprocess.run([os.path.join(BIN, 'sumo'), '-n', netp, '-r', rou, '--begin', '0', '--end', str(T),
                     '--step-length', '1', '--fcd-output', fcd, '--device.fcd.explicit', '',
@@ -127,8 +129,10 @@ def simulate(seed, n_eq=200, n_bg=600, T=6000, out_dir=os.path.join(HERE, 'trace
         miss = E[t] < 0
         E[t, miss] = E[t - 1, miss]; X[t, miss] = X[t - 1, miss]; U[t, miss] = U[t - 1, miss]
     R = np.array([[eid[e] for e in routes[v]] for v in names], np.int16)
-    np.savez_compressed(npz, E=E, X=X, U=U, R=R, elen=elen)
-    os.remove(fcd)
+    part = os.path.join(out_dir, tmp + '.npz')
+    np.savez_compressed(part, E=E, X=X, U=U, R=R, elen=elen)
+    os.replace(part, npz)
+    os.remove(fcd); os.remove(rou)
     return npz
 
 

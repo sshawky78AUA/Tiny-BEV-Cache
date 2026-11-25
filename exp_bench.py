@@ -25,7 +25,7 @@ if __name__ == '__main__':
             t_, s_, _ = json.loads(l); done.add((t_, s_))
     J = [(t, s) for s in range(10) for t in tags if (t, s) not in done]
     print(len(J), 'to do', flush=True)
-    with Pool(2) as p, open(FN, 'a') as f:
+    with Pool(int(os.environ.get('WORKERS', os.cpu_count()))) as p, open(FN, 'a') as f:
         for r in p.imap_unordered(job, J):
             f.write(json.dumps(r) + '\n'); f.flush(); print(r[0], r[1], round(r[2]['hit'], 3), round(r[2]['backhaul'], 2), flush=True)
     print('DONE')
