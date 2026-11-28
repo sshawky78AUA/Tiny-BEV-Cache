@@ -141,3 +141,7 @@ The `results2/` and `results3/` folders hold the results used in the paper, so `
 runs without re-simulating. Table II, the kappa values, correlated intents, and route
 sharing come from `results2/`; Figs. 2-5 come from `results3/`.
 
+
+## Real-data study (DAIR-V2X-C and nuScenes)
+
+`realdata/` holds the label, input and training pipelines for the classifier tiers trained on DAIR-V2X-C and nuScenes, the physics and motion-only baselines, and the simulator inputs built from the measured confusion matrices (`realdata/tiers_intent5_sim.json`). `python3 exp_v3.py dair5` and `python3 exp_v3.py dair5_scarce` rerun the simulations with these tiers; `python3 tab_dair5.py` prints the results table. See `realdata/README.md`.

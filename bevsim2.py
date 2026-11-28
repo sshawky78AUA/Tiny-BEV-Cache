@@ -62,6 +62,10 @@ class Params:
         self.M = self.G * self.G
         h = HW[self.hw]
         self.acc = np.array(h['acc']); self.d = np.array(h['d'])
+        if getattr(self, 'acc_override', None) is not None:   # e.g. measured accuracies of trained tiers
+            self.acc = np.array(self.acc_override, float)
+        if getattr(self, 'd_override', None) is not None:     # tier latencies of the trained tiers (s)
+            self.d = np.array(self.d_override, float)
         self.energy = self.d / self.d[-1]                   # e_k / E_max
 
 
@@ -110,6 +114,8 @@ class World:
                 Mk[o, o] = A
             self.Mk.append(Mk)
         self.Mk = np.array(self.Mk)
+        if getattr(P, 'Mk_override', None) is not None:      # measured confusion matrices, K x S x S
+            self.Mk = np.array(P.Mk_override, float)
         self.qhid = np.array([[rng.choice(S, 3, replace=False) for v in range(DIRS)] for m in range(M)])
         tr = np.load(simulate(seed, P.N, P.N_bg, P.T))
         self.E, self.X, self.U, self.R, self.elen = tr['E'], tr['X'], tr['U'], tr['R'], tr['elen']
@@ -232,7 +238,9 @@ def run(P, seed, method='tinybev', **opt):
     Z = np.zeros(N)
     busy_until = np.zeros(N); Bq = 0.0; GAP = []; xtrace = []
     Mdiag = np.stack([np.diag(W.Mk[kk]) for kk in range(K)])     # K x S: P(report o | intent o)
-    Hins = P.H_ins or P.T_ref
+    auto_h = (P.H_ins == 'auto')                           # learn T_h from how long inserted assets stay
+    Hins = P.T_ref if (auto_h or not P.H_ins) else P.H_ins
+    t_in = None; res_ema = None
     replay = opt.get('replay_x')
     Ebar = P.budget * W.a * en[-1]
     Ebp = (1 - P.theta) * Ebar
@@ -312,6 +320,16 @@ def run(P, seed, method='tinybev', **opt):
                 ynew = newx.any(0)
                 insert_vol = float((b[None] * (newx & ~x)).sum())
                 t_fetch[ynew & ~y] = t
+                if auto_h:
+                    if t_in is None:
+                        t_in = np.where(newx, t, -1).astype(float)
+                    else:
+                        ev = x & ~newx
+                        if ev.any():
+                            r = float((t - t_in[ev]).mean())
+                            res_ema = r if res_ema is None else 0.9 * res_ema + 0.1 * r
+                            Hins = float(np.clip(res_ema, P.Tc, P.T_ref))
+                        t_in[newx & ~x] = t
                 x = newx; y = ynew
         if leader == 'lru':
             y = np.zeros((M, S), bool)
@@ -489,11 +507,13 @@ def run(P, seed, method='tinybev', **opt):
     Tm = P.T - P.warm
     act = max(L['act'], 1); lat = np.array(L['lat']) * 1000
     nonlive = max(L['act'] - L['live'], 1)
+    res_h = Hins
     res = dict(util=float(np.sum(L['r']) / act), hit=L['hit'] / act,
                 hit_map=(L['hit'] - L['live']) / nonlive, correct=L['correct'] / act, sem=L['sem'] / act,
                 deadline=L['dl'] / act, backhaul=float(np.mean(L['bh'])),
                 lat_mean=float(lat.mean()) if len(lat) else np.nan,
                 lat_p95=float(np.percentile(lat, 95)) if len(lat) else np.nan,
+                lat_p99=float(np.percentile(lat, 99)) if len(lat) else np.nan,
                 energy_ratio_max=float(np.max(E_cum / P.T / Ebar)), energy_ratio=float(np.mean(E_cum / P.T / Ebar)),
                 Zbar=Zsum / Tm, nb_frac=L['nbh'] / max(L['hit'], 1), age_mean=float(np.mean(L['age'])) if L['age'] else np.nan,
                 bh_miss=float(np.mean(L['miss'])), bh_ref=float(np.mean(L['ref'])), bh_ins=float(np.mean(L['ins'])),
@@ -501,6 +521,7 @@ def run(P, seed, method='tinybev', **opt):
                 success=L['succ'] / act,
                 brgap_mean=float(np.mean(GAP)) if GAP else np.nan, brgap_p99=float(np.percentile(GAP, 99)) if GAP else np.nan,
                 kappa_p99=float(np.percentile(KAP, 99)) if KAP else np.nan, kappa_mean=float(np.mean(KAP)) if KAP else np.nan, bins={kk: vv.tolist() for kk, vv in BIN.items()})
+    res['T_h'] = float(res_h)
     if rec_ts:
         res['ts'] = TS
     if opt.get('record_lat'):

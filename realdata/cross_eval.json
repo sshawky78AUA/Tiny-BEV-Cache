@@ -1,0 +1,134 @@
+{
+ "dair majority": {
+  "top1": 0.54,
+  "within1": 0.672,
+  "turn": 0.0,
+  "straight": 1.0
+ },
+ "dair ctrv sign1": {
+  "top1": 0.558,
+  "within1": 0.777,
+  "turn": 0.152,
+  "straight": 0.905
+ },
+ "dair ctrv sign-1": {
+  "top1": 0.489,
+  "within1": 0.586,
+  "turn": 0.002,
+  "straight": 0.905
+ },
+ "nusc->dair w4": {
+  "top1": 0.451,
+  "within1": 0.784,
+  "turn": 0.149,
+  "straight": 0.709
+ },
+ "nusc->dair w8": {
+  "top1": 0.3,
+  "within1": 0.777,
+  "turn": 0.153,
+  "straight": 0.426
+ },
+ "nusc->dair w16": {
+  "top1": 0.574,
+  "within1": 0.781,
+  "turn": 0.11,
+  "straight": 0.97
+ },
+ "nusc->dair w32": {
+  "top1": 0.247,
+  "within1": 0.757,
+  "turn": 0.149,
+  "straight": 0.329
+ },
+ "dair in-domain CV w4": {
+  "top1": 0.573,
+  "within1": 0.766,
+  "turn": 0.161,
+  "straight": 0.925
+ },
+ "dair in-domain CV w8": {
+  "top1": 0.591,
+  "within1": 0.832,
+  "turn": 0.251,
+  "straight": 0.882
+ },
+ "dair in-domain CV w16": {
+  "top1": 0.6,
+  "within1": 0.809,
+  "turn": 0.23,
+  "straight": 0.917
+ },
+ "dair in-domain CV w32": {
+  "top1": 0.6,
+  "within1": 0.813,
+  "turn": 0.269,
+  "straight": 0.882
+ },
+ "nusc majority": {
+  "top1": 0.744,
+  "within1": 0.872,
+  "turn": 0.0,
+  "straight": 1.0
+ },
+ "nusc ctrv sign1": {
+  "top1": 0.714,
+  "within1": 0.863,
+  "turn": 0.228,
+  "straight": 0.881
+ },
+ "nusc ctrv sign-1": {
+  "top1": 0.662,
+  "within1": 0.781,
+  "turn": 0.025,
+  "straight": 0.881
+ },
+ "dair->nusc w4": {
+  "top1": 0.534,
+  "within1": 0.774,
+  "turn": 0.109,
+  "straight": 0.68
+ },
+ "dair->nusc w8": {
+  "top1": 0.357,
+  "within1": 0.716,
+  "turn": 0.143,
+  "straight": 0.431
+ },
+ "dair->nusc w16": {
+  "top1": 0.443,
+  "within1": 0.751,
+  "turn": 0.13,
+  "straight": 0.551
+ },
+ "dair->nusc w32": {
+  "top1": 0.423,
+  "within1": 0.781,
+  "turn": 0.161,
+  "straight": 0.513
+ },
+ "nusc in-domain CV w4": {
+  "top1": 0.747,
+  "within1": 0.906,
+  "turn": 0.169,
+  "straight": 0.946
+ },
+ "nusc in-domain CV w8": {
+  "top1": 0.757,
+  "within1": 0.901,
+  "turn": 0.123,
+  "straight": 0.974
+ },
+ "nusc in-domain CV w16": {
+  "top1": 0.739,
+  "within1": 0.893,
+  "turn": 0.109,
+  "straight": 0.955
+ },
+ "nusc in-domain CV w32": {
+  "top1": 0.738,
+  "within1": 0.908,
+  "turn": 0.204,
+  "straight": 0.922
+ }
+}
